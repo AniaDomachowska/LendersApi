@@ -3,11 +3,11 @@ using LendersApi.Repository.Model;
 
 namespace LendersApi.Repository
 {
-	public class PersonRepository : IPersonRepository
+	public class PeopleRepository : IPeopleRepository
 	{
 		private readonly EfDbContext context;
 
-		public PersonRepository(EfDbContext context)
+		public PeopleRepository(EfDbContext context)
 		{
 			this.context = context;
 		}

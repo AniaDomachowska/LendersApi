@@ -1,4 +1,5 @@
 ﻿using LendersApi.Controllers;
+using LendersApi.Repository;
 using NUnit.Framework;
 
 namespace LendersApi.Tests
@@ -9,7 +10,8 @@ namespace LendersApi.Tests
 		[Test]
 		public void GetAll_ReturnsAllPeople()
 		{
-			var peopleController = new PeopleController();
+			var repository = NSubstitute.Substitute.For<IPeopleRepository>();
+			var peopleController = new PeopleController(repository);
 		}
 	}
 }

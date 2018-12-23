@@ -6,7 +6,7 @@ namespace LendersApi.Repository
 	public class EfDbContext : DbContext
 	{
 		public DbSet<Person> People { get; set; }
-		public DbSet<Ledger> Ledger { get; set; }
+		public DbSet<Loan> Ledger { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
@@ -16,7 +16,7 @@ namespace LendersApi.Repository
 				.ToTable("People")
 				.HasKey(element => element.Id);
 
-			modelBuilder.Entity<Ledger>()
+			modelBuilder.Entity<Loan>()
 				.ToTable("Ledger")
 				.HasKey(element => element.Id);
 		}

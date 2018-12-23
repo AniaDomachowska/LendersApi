@@ -2,7 +2,7 @@
 
 namespace LendersApi.Repository.Model
 {
-	public class Ledger
+	public class Loan
 	{
 		public int Id { get; set; }
 		public int Lender { get; set; }
