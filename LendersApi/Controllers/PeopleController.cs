@@ -21,7 +21,10 @@ namespace LendersApi.Controllers
 		[HttpGet]
 		public IEnumerable<PersonDto> GetPeople()
 		{
-			return peopleRepository.GetAll().AsEnumerable().Select(Mapper.Map<PersonDto>);
+			return peopleRepository
+				.GetAll()
+				.AsEnumerable()
+				.Select(Mapper.Map<PersonDto>);
 		}
 	}
 }
