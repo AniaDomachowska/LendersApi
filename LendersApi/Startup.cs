@@ -51,6 +51,10 @@ namespace LendersApi
 			// you can add all the entities you need
 			var builder = new ODataConventionModelBuilder();
 			builder.EntitySet<PersonDto>("People");
+
+			var action = builder.EntityType<PersonDto>().Action("AddPerson");
+			action.Parameter(typeof(PersonCreateDto), "model");
+
 			builder.EntitySet<LoanDto>("Loans");
 
 			return builder.GetEdmModel();

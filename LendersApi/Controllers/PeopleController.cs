@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using LendersApi.Dto;
 using LendersApi.Repository;
+using LendersApi.Repository.Model;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,21 +12,34 @@ namespace LendersApi.Controllers
 {
 	public class PeopleController : ODataController
 	{
-		private readonly IPeopleRepository peopleRepository;
+		private readonly IUnitOfWork unitOfWork;
 
-		public PeopleController(IPeopleRepository peopleRepository)
+		public PeopleController(IUnitOfWork unitOfWork)
 		{
-			this.peopleRepository = peopleRepository;
+			this.unitOfWork = unitOfWork;
 		}
 
 		[EnableQuery]
-		[HttpGet]
+		[System.Web.Http.HttpGet]
 		public IEnumerable<PersonDto> GetPeople()
 		{
-			return peopleRepository
+			return unitOfWork
+				.PeopleRepository
 				.GetAll()
 				.AsEnumerable()
 				.Select(Mapper.Map<PersonDto>);
+		}
+
+		[HttpPost]
+		public async Task<ActionResult> AddPerson(PersonCreateDto personCreateDto)
+		{
+			unitOfWork
+				.PeopleRepository
+				.Add(Mapper.Map<Person>(personCreateDto));
+
+			await unitOfWork.Commit();
+
+			return Ok(personCreateDto);
 		}
 	}
 }
