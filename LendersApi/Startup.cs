@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LendersApi.Dto;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.OData.Edm;
 
 namespace LendersApi
 {
@@ -26,22 +23,34 @@ namespace LendersApi
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+			services.AddOData();
+			services.AddODataQueryFilter();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
-			{
 				app.UseDeveloperExceptionPage();
-			}
 			else
-			{
 				app.UseHsts();
-			}
 
 			app.UseHttpsRedirection();
-			app.UseMvc();
+
+			app.UseMvc(b =>
+				b.MapODataServiceRoute("odata", "odata", GetEdmModel()
+				));
+		}
+
+		private IEdmModel GetEdmModel()
+		{
+			// you can add all the entities you need
+			var builder = new ODataConventionModelBuilder();
+			builder.EntitySet<PersonDto>("People");
+			builder.EntitySet<LoanDto>("Loans");
+
+			return builder.GetEdmModel();
 		}
 	}
 }
