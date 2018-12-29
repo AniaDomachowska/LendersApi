@@ -21,7 +21,7 @@ namespace LendersApi.Repository
 				.HasKey(element => element.Id);
 
 			modelBuilder.Entity<Loan>()
-				.ToTable("Ledger")
+				.ToTable("Loans")
 				.HasKey(element => element.Id);
 		}
 	}

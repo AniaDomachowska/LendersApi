@@ -9,6 +9,6 @@ namespace LendersApi.Repository.Model
 		public int Borrower { get; set; }
 		public decimal Amount { get; set; }
 		public decimal PaidAmount { get; set; }
-		public DateTime PaidDateTime { get; set; }
+		public DateTime? PaidDateTime { get; set; }
 	}
 }

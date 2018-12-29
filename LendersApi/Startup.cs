@@ -78,8 +78,12 @@ namespace LendersApi
 			action.Parameter<PersonCreateDto>("model");
 
 			var loans = builder.EntitySet<LoanDto>("Loans");
+
 			action = loans.EntityType.Collection.Action("AddLoan");
 			action.Parameter<LoanCreateDto>("model");
+
+			action = loans.EntityType.Action("PayLoan");
+			action.Parameter<decimal>("Amount");
 
 			return builder.GetEdmModel();
 		}
