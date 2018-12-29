@@ -6,13 +6,16 @@ namespace LendersApi.Repository
 	{
 		private readonly EfDbContext context;
 
-		public UnitOfWork(EfDbContext context, IPeopleRepository peopleRepository)
+		public UnitOfWork(EfDbContext context, IPeopleRepository peopleRepository, ILoanRepository loanRepository)
 		{
 			this.context = context;
 			PeopleRepository = peopleRepository;
+			LoanRepository = loanRepository;
 		}
 
 		public IPeopleRepository PeopleRepository { get; }
+
+		public ILoanRepository LoanRepository { get; }
 
 		public async Task Commit()
 		{

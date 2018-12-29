@@ -21,13 +21,35 @@ namespace LendersApi.Controllers
 
 		[EnableQuery]
 		[System.Web.Http.HttpGet]
-		public IEnumerable<PersonDto> GetPeople()
+		public IEnumerable<PersonDto> Get()
 		{
 			return unitOfWork
 				.PeopleRepository
 				.GetAll()
 				.AsEnumerable()
 				.Select(Mapper.Map<PersonDto>);
+		}
+
+		[EnableQuery]
+		[System.Web.Http.HttpGet]
+		public ActionResult<PersonDto> Get([FromODataUri] int key)
+		{
+			var person = unitOfWork
+				.PeopleRepository
+				.GetOne(key);
+
+			return Mapper.Map<PersonDto>(person);
+		}
+
+		[EnableQuery]
+		public IQueryable<LoanDto> GetLoans([FromODataUri]int key)
+		{
+			return unitOfWork
+				.LoanRepository
+				.GetAllForPerson(key)
+				.AsEnumerable()
+				.Select(Mapper.Map<LoanDto>)
+				.AsQueryable();
 		}
 
 		[HttpPost]

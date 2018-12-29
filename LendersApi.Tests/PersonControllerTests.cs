@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using LendersApi.Controllers;
 using LendersApi.Dto;
@@ -24,20 +25,20 @@ namespace LendersApi.Tests
 		public void GetAll_ReturnsAllPeople()
 		{
 			// Arrange
-			var peopleController = PrepareSut();
+			var peopleController = PrepareSut(out _);
 
 			// Act
-			var people = peopleController.GetPeople();
+			var people = peopleController.Get();
 
 			// Assert
 			people.Should().Contain(element => element.FirstName == "John");
 		}
 
 		[Test]
-		public void AddPerson_AddsPerson()
+		public async Task AddPerson_AddsPerson()
 		{
 			// Arrange
-			var peopleController = PrepareSut();
+			var peopleController = PrepareSut(out var unitOfWork);
 
 			// Act
 			var personCreateDto = new PersonCreateDto()
@@ -46,22 +47,47 @@ namespace LendersApi.Tests
 				LastName = "Doe"
 			};
 			
-			var result = peopleController.AddPerson(personCreateDto);
+			await peopleController.AddPerson(personCreateDto);
 
 			// Assert
-			
+
+			unitOfWork.PeopleRepository
+				.Received()
+				.Add(Arg.Is<Person>(element => element.FirstName == "John"));
 		}
 
-		private static PeopleController PrepareSut()
+		private static PeopleController PrepareSut(out IUnitOfWork unitOfWork)
 		{
 			var repository = Substitute.For<IPeopleRepository>();
-			repository.GetAll().Returns(new List<Person> {new Person {FirstName = "John"}}.AsQueryable());
+			repository.GetAll().Returns(
+				new List<Person>
+				{
+					new Person {FirstName = "John"}
+				}.AsQueryable());
 
-			IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+			unitOfWork = Substitute.For<IUnitOfWork>();
 			unitOfWork.PeopleRepository.Returns(repository);
 
 			var peopleController = new PeopleController(unitOfWork);
 			return peopleController;
+		}
+
+		[Test]
+		public void GetAll_ReturnsAllLoans()
+		{
+			// Arrange
+			var personController = PrepareSut(out var unitOfWork);
+
+			unitOfWork.LoanRepository.GetAllForPerson(Arg.Is(1)).Returns(new List<Loan>()
+					{
+						new Loan {Amount = (decimal) 12.2, Id = 1, Lender = 2}
+					}.AsQueryable());
+
+			// Act
+			var loans = personController.GetLoans(1);
+
+			// Assert
+			loans.Should().Contain(element => element.Amount == (decimal)12.2);
 		}
 	}
 }

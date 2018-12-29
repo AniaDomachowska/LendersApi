@@ -1,10 +1,13 @@
-﻿using LendersApi.Dto;
+﻿using System.Configuration;
+using LendersApi.Dto;
 using LendersApi.Helpers;
+using LendersApi.Repository;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.Edm;
@@ -29,6 +32,18 @@ namespace LendersApi
 
 			services.AddOData();
 			services.AddODataQueryFilter();
+
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped<IPeopleRepository, PeopleRepository>();
+			services.AddScoped<ILoanRepository, LoanRepository>();
+
+
+			services.AddDbContext<EfDbContext>(
+				options =>
+				{
+					options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+				}
+			);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +59,13 @@ namespace LendersApi
 			app.UseMvc(b =>
 				b.MapODataServiceRoute("odata", "odata", GetEdmModel()
 				));
+
+			using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+			{
+				var context = serviceScope.ServiceProvider.GetRequiredService<EfDbContext>();
+				context.Database.EnsureCreated();
+			}
+
 		}
 
 		private IEdmModel GetEdmModel()
@@ -52,7 +74,7 @@ namespace LendersApi
 			var builder = new ODataConventionModelBuilder();
 			builder.EntitySet<PersonDto>("People");
 
-			var action = builder.EntityType<PersonDto>().Action("AddPerson");
+			var action = builder.EntityType<PersonDto>().Collection.Action("AddPerson");
 			action.Parameter(typeof(PersonCreateDto), "model");
 
 			builder.EntitySet<LoanDto>("Loans");

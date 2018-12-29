@@ -1,14 +1,18 @@
-﻿using System.Data.Entity;
-using LendersApi.Repository.Model;
+﻿using LendersApi.Repository.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace LendersApi.Repository
 {
 	public class EfDbContext : DbContext
 	{
-		public DbSet<Person> People { get; set; }
-		public DbSet<Loan> Ledger { get; set; }
+		public EfDbContext(DbContextOptions options) : base(options)
+		{
+		}
 
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		public DbSet<Person> People { get; set; }
+		public DbSet<Loan> Loans { get; set; }
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
