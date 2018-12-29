@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using LendersApi.Controllers;
 using LendersApi.Dto;
 using LendersApi.Repository;
@@ -46,6 +47,61 @@ namespace LendersApi.Tests
 				.Add(Arg.Is<Loan>(element => element.Amount == loanCreateDto.Amount
 				                             && element.Borrower == loanCreateDto.Borrower
 				                             && element.Lender == loanCreateDto.Lender));
+
+			await unitOfWork
+				.Received()
+				.Commit();
+		}
+
+		[Test]
+		public async Task PayLoan_PaysPartOfTheLoanProperly()
+		{
+			// Arrange
+			var loansController = PrepareSut(out var unitOfWork);
+
+			var loan = new Loan()
+			{
+				Amount = 100,
+				Borrower = 1,
+				Lender = 2
+			};
+
+			unitOfWork.LoanRepository.GetOne(Arg.Any<int>()).Returns(loan);
+
+			// Act
+			var oDataActionParameters = new ODataActionParameters { ["Amount"] = (decimal) 12.2 };
+			await loansController.PayLoan(1, oDataActionParameters);
+
+			// Assert
+
+			loan.PaidAmount.Should().Be((decimal)12.2);
+		}
+
+		[Test]
+		public async Task PayLoan_PaysWholeLoanProperly()
+		{
+			// Arrange
+			var loansController = PrepareSut(out var unitOfWork);
+
+			var loan = new Loan()
+			{
+				Amount = 100,
+				Borrower = 1,
+				Lender = 2
+			};
+
+			unitOfWork.LoanRepository.GetOne(Arg.Any<int>()).Returns(loan);
+
+			// Act
+			var oDataActionParameters = new ODataActionParameters { ["Amount"] = (decimal)44 };
+			await loansController.PayLoan(1, oDataActionParameters);
+			await loansController.PayLoan(1, oDataActionParameters);
+			await loansController.PayLoan(1, oDataActionParameters);
+
+			// Assert
+
+			loan.PaidAmount.Should().Be(132);
+			loan.PaidDateTime.Should().NotBeNull();
 		}
 
 		private static LoansController PrepareSut(out IUnitOfWork unitOfWork)
