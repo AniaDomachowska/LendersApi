@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LendersApi.Repository.Model;
 
 namespace LendersApi.Repository
@@ -6,7 +7,7 @@ namespace LendersApi.Repository
 	public interface ILoanRepository
 	{
 		void Add(Loan loan);
-		Loan GetOne(int id);
-		IQueryable<Loan> GetAllForPerson(int borrowerId);
+		Task<Loan> GetOne(int id);
+		Task<IEnumerable<Loan>> GetAllForPerson(int borrowerId);
 	}
 }

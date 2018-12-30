@@ -2,8 +2,8 @@
 {
 	public class LoanCreateDto
 	{
-		public int Lender { get; set; }
-		public int Borrower { get; set; }
+		public int LenderId { get; set; }
+		public int BorrowerId { get; set; }
 		public decimal Amount { get; set; }
 	}
 }

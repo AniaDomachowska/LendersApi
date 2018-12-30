@@ -20,9 +20,42 @@ namespace LendersApi.Repository
 				.ToTable("People")
 				.HasKey(element => element.Id);
 
+			modelBuilder.Entity<Person>()
+				.Property(element => element.FirstName)
+				.HasMaxLength(50)
+				.IsRequired();
+
+			modelBuilder.Entity<Person>()
+				.Property(element => element.LastName)
+				.HasMaxLength(50)
+				.IsRequired();
+
 			modelBuilder.Entity<Loan>()
 				.ToTable("Loans")
 				.HasKey(element => element.Id);
+
+			modelBuilder.Entity<Loan>()
+				.Property(element => element.Amount)
+				.HasColumnType("decimal(18,2)")
+				.IsRequired();
+
+			modelBuilder.Entity<Loan>()
+				.Property(element => element.PaidAmount)
+				.HasColumnType("decimal(18,2)");
+
+			modelBuilder.Entity<Loan>()
+				.Property(element => element.LenderId)
+				.IsRequired();
+
+			modelBuilder.Entity<Loan>()
+				.Property(element => element.Borrower)
+				.IsRequired();
+
+			modelBuilder.Entity<Loan>()
+				.HasOne(element => element.Borrower);
+
+			modelBuilder.Entity<Loan>()
+				.HasOne(element => element.Lender);
 		}
 	}
 }

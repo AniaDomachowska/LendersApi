@@ -32,22 +32,28 @@ namespace LendersApi.Controllers
 
 		[EnableQuery]
 		[System.Web.Http.HttpGet]
-		public ActionResult<PersonDto> Get([FromODataUri] int key)
+		public async Task<ActionResult<PersonDto>> Get([FromODataUri] int key)
 		{
-			var person = unitOfWork
+			var person = await unitOfWork
 				.PeopleRepository
 				.GetOne(key);
+
+			if (person == null)
+			{
+				return BadRequest("Person does not exist.");
+			}
 
 			return Mapper.Map<PersonDto>(person);
 		}
 
 		[EnableQuery]
-		public IQueryable<LoanDto> GetLoans([FromODataUri]int key)
+		public async Task<IQueryable<LoanDto>> GetLoans([FromODataUri]int key)
 		{
-			return unitOfWork
+			var loans = await unitOfWork
 				.LoanRepository
-				.GetAllForPerson(key)
-				.AsEnumerable()
+				.GetAllForPerson(key);
+
+			return loans
 				.Select(Mapper.Map<LoanDto>)
 				.AsQueryable();
 		}
@@ -55,6 +61,11 @@ namespace LendersApi.Controllers
 		[HttpPost]
 		public async Task<ActionResult> AddPerson(PersonCreateDto personCreateDto)
 		{
+			if (personCreateDto == null)
+			{
+				return BadRequest("Request data model was not provided.");
+			}
+
 			unitOfWork
 				.PeopleRepository
 				.Add(Mapper.Map<Person>(personCreateDto));

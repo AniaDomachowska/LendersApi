@@ -10,6 +10,7 @@ namespace LendersApi.Tests.Helpers
 		{
 			Mapper.Initialize(cfg => {
 				cfg.CreateMap<Person, PersonDto>();
+				cfg.CreateMap<PersonCreateDto, Person>();
 				cfg.CreateMap<Loan, LoanDto>();
 				cfg.CreateMap<LoanCreateDto, Loan>();
 			});

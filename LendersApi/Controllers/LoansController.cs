@@ -35,8 +35,26 @@ namespace LendersApi.Controllers
 			[FromODataUri]int key,
 			ODataActionParameters parameters)
 		{
-			var amount = (decimal)parameters["Amount"];
-			var loan = unitOfWork.LoanRepository.GetOne(key);
+			var amountParam = parameters["Amount"];
+
+			if (amountParam == null)
+			{
+				return BadRequest("Amount not provided.");
+			}
+
+			var amount = (decimal)amountParam;
+
+			if (amount <= 0)
+			{
+				return BadRequest("Amount is less than 0");
+			}
+
+			var loan = await unitOfWork.LoanRepository.GetOne(key);
+
+			if (loan == null)
+			{
+				return BadRequest("Loan does not exist.");
+			}
 
 			loan.PaidAmount += amount;
 

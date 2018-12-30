@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using LendersApi.Controllers;
 using LendersApi.Dto;
@@ -15,9 +16,10 @@ namespace LendersApi.Tests
 	[TestFixture]
 	public class PersonControllerTests
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void Startup()
 		{
+			Mapper.Reset();
 			AutoMapperConfig.Initialize();
 		}
 
@@ -73,18 +75,18 @@ namespace LendersApi.Tests
 		}
 
 		[Test]
-		public void GetAll_ReturnsAllLoans()
+		public async Task GetAll_ReturnsAllLoans()
 		{
 			// Arrange
 			var personController = PrepareSut(out var unitOfWork);
 
 			unitOfWork.LoanRepository.GetAllForPerson(Arg.Is(1)).Returns(new List<Loan>()
 					{
-						new Loan {Amount = (decimal) 12.2, Id = 1, Lender = 2}
+						new Loan {Amount = (decimal) 12.2, Id = 1, LenderId = 2}
 					}.AsQueryable());
 
 			// Act
-			var loans = personController.GetLoans(1);
+			var loans = await personController.GetLoans(1);
 
 			// Assert
 			loans.Should().Contain(element => element.Amount == (decimal)12.2);

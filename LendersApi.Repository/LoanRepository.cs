@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using LendersApi.Repository.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace LendersApi.Repository
 {
@@ -17,23 +20,19 @@ namespace LendersApi.Repository
 			context.Loans.Add(loan);
 		}
 
-		public Loan GetOne(int id)
+		public async Task<Loan> GetOne(int id)
 		{
-			return context
+			return await context
 				.Loans
-				.FirstOrDefault(element => element.Id == id);
+				.FirstOrDefaultAsync(element => element.Id == id);
 		}
 
-		public IQueryable<Loan> GetAllForPerson(int borrowerId)
+		public async Task<IEnumerable<Loan>> GetAllForPerson(int borrowerId)
 		{
-			return context
+			return await context
 				.Loans
-				.Where(element => element.Lender == borrowerId);
-		}
-
-		public IQueryable<Loan> GetAll()
-		{
-			return context.Loans.AsQueryable();
+				.Where(element => element.LenderId == borrowerId)
+				.ToListAsync();
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using LendersApi.Repository.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace LendersApi.Repository
 {
@@ -17,11 +19,11 @@ namespace LendersApi.Repository
 			context.People.Add(person);
 		}
 
-		public Person GetOne(int id)
+		public async Task<Person> GetOne(int id)
 		{
-			return context
+			return await context
 				.People
-				.FirstOrDefault(element => element.Id == id);
+				.FirstOrDefaultAsync(element => element.Id == id);
 		}
 
 		public IQueryable<Person> GetAll()

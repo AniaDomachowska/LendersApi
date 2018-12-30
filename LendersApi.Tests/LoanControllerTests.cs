@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using LendersApi.Controllers;
 using LendersApi.Dto;
@@ -16,9 +17,10 @@ namespace LendersApi.Tests
 	[TestFixture]
 	public class LoanControllerTests
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void Startup()
 		{
+			Mapper.Reset();
 			AutoMapperConfig.Initialize();
 		}
 
@@ -33,8 +35,8 @@ namespace LendersApi.Tests
 			var loanCreateDto = new LoanCreateDto()
 			{
 				Amount = 100,
-				Borrower = 1,
-				Lender = 1
+				BorrowerId = 1,
+				LenderId = 1
 			};
 
 			var oDataActionParameters = new ODataActionParameters {["model"] = loanCreateDto};
@@ -45,8 +47,8 @@ namespace LendersApi.Tests
 			unitOfWork.LoanRepository
 				.Received()
 				.Add(Arg.Is<Loan>(element => element.Amount == loanCreateDto.Amount
-				                             && element.Borrower == loanCreateDto.Borrower
-				                             && element.Lender == loanCreateDto.Lender));
+				                             && element.BorrowerId == loanCreateDto.BorrowerId
+				                             && element.LenderId == loanCreateDto.LenderId));
 
 			await unitOfWork
 				.Received()
@@ -62,8 +64,8 @@ namespace LendersApi.Tests
 			var loan = new Loan()
 			{
 				Amount = 100,
-				Borrower = 1,
-				Lender = 2
+				BorrowerId = 1,
+				LenderId = 2
 			};
 
 			unitOfWork.LoanRepository.GetOne(Arg.Any<int>()).Returns(loan);
@@ -86,14 +88,16 @@ namespace LendersApi.Tests
 			var loan = new Loan()
 			{
 				Amount = 100,
-				Borrower = 1,
-				Lender = 2
+				BorrowerId = 1,
+				LenderId = 2
 			};
 
 			unitOfWork.LoanRepository.GetOne(Arg.Any<int>()).Returns(loan);
 
-			// Act
 			var oDataActionParameters = new ODataActionParameters { ["Amount"] = (decimal)44 };
+
+			// Act
+
 			await loansController.PayLoan(1, oDataActionParameters);
 			await loansController.PayLoan(1, oDataActionParameters);
 			await loansController.PayLoan(1, oDataActionParameters);
@@ -110,8 +114,8 @@ namespace LendersApi.Tests
 			repository.GetAllForPerson(Arg.Is(1)).Returns(new List<Loan> {new Loan
 					{
 						Amount = (decimal)12.33,
-						Borrower = 1,
-						Lender = 2
+						BorrowerId = 1,
+						LenderId = 2
 					}}.AsQueryable());
 
 			unitOfWork = Substitute.For<IUnitOfWork>();
