@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using LendersApi.Dto;
+﻿using LendersApi.Dto;
 using LendersApi.Helpers;
 using LendersApi.Repository;
 using Microsoft.AspNet.OData.Builder;
@@ -10,7 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace LendersApi
 {
@@ -37,7 +39,6 @@ namespace LendersApi
 			services.AddScoped<IPeopleRepository, PeopleRepository>();
 			services.AddScoped<ILoanRepository, LoanRepository>();
 
-
 			services.AddDbContext<EfDbContext>(
 				options =>
 				{
@@ -47,7 +48,9 @@ namespace LendersApi
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app, 
+			ILoggerFactory loggerFactory, 
+			IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
 				app.UseDeveloperExceptionPage();
@@ -66,6 +69,10 @@ namespace LendersApi
 				context.Database.EnsureCreated();
 			}
 
+			//loggerFactory.AddNLog();
+
+			//env.ConfigureNLog("nlog.config");
+
 		}
 
 		private IEdmModel GetEdmModel()
@@ -76,14 +83,17 @@ namespace LendersApi
 
 			var action = people.EntityType.Collection.Action("AddPerson");
 			action.Parameter<PersonCreateDto>("model");
+			action.ReturnsFromEntitySet<PersonDto>("People");
 
 			var loans = builder.EntitySet<LoanDto>("Loans");
 
 			action = loans.EntityType.Collection.Action("AddLoan");
 			action.Parameter<LoanCreateDto>("model");
+			action.ReturnsFromEntitySet<LoanDto>("Loans");
 
 			action = loans.EntityType.Action("PayLoan");
 			action.Parameter<decimal>("Amount");
+			action.ReturnsFromEntitySet<LoanDto>("Loans");
 
 			return builder.GetEdmModel();
 		}

@@ -31,7 +31,7 @@ namespace LendersApi.Repository
 		{
 			return await context
 				.Loans
-				.Where(element => element.LenderId == borrowerId)
+				.Where(element => element.BorrowerId == borrowerId)
 				.ToListAsync();
 		}
 	}

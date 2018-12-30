@@ -48,14 +48,18 @@ namespace LendersApi.Repository
 				.IsRequired();
 
 			modelBuilder.Entity<Loan>()
-				.Property(element => element.Borrower)
+				.Property(element => element.BorrowerId)
 				.IsRequired();
 
 			modelBuilder.Entity<Loan>()
-				.HasOne(element => element.Borrower);
+				.HasOne(element => element.Borrower)
+				.WithMany(element=>element.BorrowerLoans)
+				.OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<Loan>()
-				.HasOne(element => element.Lender);
+				.HasOne(element => element.Lender)
+				.WithMany(element => element.LenderLoans)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

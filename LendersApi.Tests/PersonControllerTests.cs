@@ -8,6 +8,7 @@ using LendersApi.Dto;
 using LendersApi.Repository;
 using LendersApi.Repository.Model;
 using LendersApi.Tests.Helpers;
+using Microsoft.AspNet.OData;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -42,14 +43,17 @@ namespace LendersApi.Tests
 			// Arrange
 			var peopleController = PrepareSut(out var unitOfWork);
 
-			// Act
 			var personCreateDto = new PersonCreateDto()
 			{
 				FirstName = "John",
 				LastName = "Doe"
 			};
-			
-			await peopleController.AddPerson(personCreateDto);
+
+			var parameters = new ODataActionParameters {["model"] = personCreateDto};
+
+			// Act
+
+			await peopleController.AddPerson(parameters);
 
 			// Assert
 

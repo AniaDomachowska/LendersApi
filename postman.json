@@ -1,0 +1,215 @@
+{
+	"info": {
+		"_postman_id": "3aa89dfc-465e-4585-b702-055baf544e51",
+		"name": "Lenders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add borrower",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"model\": {\n\t\t\"FirstName\" : \"John\",\n\t\t\"LastName\" : \"Doe\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/people/addPerson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"people",
+						"addPerson"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add lender",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "331f6ef2-7e50-47c2-a212-74bea009e671",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"var lenderId = jsonData.Id;",
+							"pm.globals.set(\"lenderId\", lenderId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"model\": {\n\t\t\"FirstName\" : \"John\",\n\t\t\"LastName\" : \"Doe\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/people/addPerson",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"people",
+						"addPerson"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get people",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/people",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"people"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add loan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "42881479-2464-4699-9453-d5467ae09188",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"var loanId = jsonData.Id;",
+							"pm.globals.set(\"loanId\", loanId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"model\" : {\n\t\t\"Amount\" : 100.0,\n\t\t\"BorrowerId\" : {{borrowerId}},\n\t\t\"LenderId\" : {{lenderId}}\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/loans/addLoan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"loans",
+						"addLoan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pay loan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Amount\" : 12.4\n}"
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/loans/{{loanId}}/payLoan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"loans",
+						"{{loanId}}",
+						"payLoan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get borrower's loans",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost/Lenders/odata/people({{borrowerId}})/Loans",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Lenders",
+						"odata",
+						"people({{borrowerId}})",
+						"Loans"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
