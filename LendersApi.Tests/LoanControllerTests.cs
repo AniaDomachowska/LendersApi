@@ -31,15 +31,31 @@ namespace LendersApi.Tests
 			// Arrange
 			var loansController = PrepareSut(out var unitOfWork);
 
-			// Act
+			unitOfWork.PeopleRepository.GetOne(Arg.Is(1)).Returns(new Person()
+			{
+				Id = 1,
+				FirstName = "John",
+				LastName = "Doe"
+			});
+
+			unitOfWork.PeopleRepository.GetOne(Arg.Is(2)).Returns(new Person()
+			{
+				Id = 2,
+				FirstName = "Mark",
+				LastName = "Doe"
+			});
+
 			var loanCreateDto = new LoanCreateDto()
 			{
 				Amount = 100,
 				BorrowerId = 1,
-				LenderId = 1
+				LenderId = 2
 			};
 
-			var oDataActionParameters = new ODataActionParameters {["model"] = loanCreateDto};
+			var oDataActionParameters = new ODataActionParameters { ["model"] = loanCreateDto };
+
+			// Act
+
 			await loansController.AddLoan(oDataActionParameters);
 
 			// Assert
@@ -121,7 +137,9 @@ namespace LendersApi.Tests
 			unitOfWork = Substitute.For<IUnitOfWork>();
 			unitOfWork.LoanRepository.Returns(repository);
 
-			var loanController = new LoansController(unitOfWork);
+			var logger = Substitute.For<Microsoft.Extensions.Logging.ILogger<LoansController>>();
+
+			var loanController = new LoansController(unitOfWork, logger);
 			return loanController;
 		}
 	}

@@ -30,6 +30,11 @@ namespace LendersApi.Controllers
 				return ReturnBadRequestWithLog("Request data model not provided.");
 			}
 
+			if (loanCreateDto.BorrowerId == loanCreateDto.LenderId)
+			{
+				return ReturnBadRequestWithLog("Person cannot lend money to oneself.");
+			}
+
 			var borrower = await unitOfWork.PeopleRepository.GetOne(loanCreateDto.BorrowerId);
 			if (borrower == null)
 			{

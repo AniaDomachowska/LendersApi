@@ -9,6 +9,7 @@ using LendersApi.Repository;
 using LendersApi.Repository.Model;
 using LendersApi.Tests.Helpers;
 using Microsoft.AspNet.OData;
+using NLog;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -74,7 +75,9 @@ namespace LendersApi.Tests
 			unitOfWork = Substitute.For<IUnitOfWork>();
 			unitOfWork.PeopleRepository.Returns(repository);
 
-			var peopleController = new PeopleController(unitOfWork);
+			var logger = Substitute.For<Microsoft.Extensions.Logging.ILogger<PeopleController>>();
+
+			var peopleController = new PeopleController(unitOfWork, logger);
 			return peopleController;
 		}
 
