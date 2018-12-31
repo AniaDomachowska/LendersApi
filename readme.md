@@ -1,5 +1,10 @@
 An example implementation of OData REST Api.
 
+# To test the API.
+- Build the solution
+- Deploy "LendersApi" website under IIS.
+- Correct the connection string in the appsettings.json to point on existing SQL server instance. (The database will be created automatically)
+
 # Add new person:
     POST /Lenders/odata/people/addPerson
     Host: localhost
