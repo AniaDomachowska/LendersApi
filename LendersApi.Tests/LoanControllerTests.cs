@@ -127,12 +127,6 @@ namespace LendersApi.Tests
 		private static LoansController PrepareSut(out IUnitOfWork unitOfWork)
 		{
 			var repository = Substitute.For<ILoanRepository>();
-			repository.GetAllForPerson(Arg.Is(1)).Returns(new List<Loan> {new Loan
-					{
-						Amount = (decimal)12.33,
-						BorrowerId = 1,
-						LenderId = 2
-					}}.AsQueryable());
 
 			unitOfWork = Substitute.For<IUnitOfWork>();
 			unitOfWork.LoanRepository.Returns(repository);

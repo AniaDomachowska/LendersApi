@@ -1,7 +1,7 @@
 An example implementation of OData REST Api.
 
 # Add new person:
-    POST /Lenders/odata/people/addPerson HTTP/1.1
+    POST /Lenders/odata/people/addPerson
     Host: localhost
     {
 	    "model": {
@@ -11,7 +11,7 @@ An example implementation of OData REST Api.
     }
 	
 # Create loan:
-    POST /Lenders/odata/loans/addLoan HTTP/1.1
+    POST /Lenders/odata/loans/addLoan
     Host: localhost
     Content-Type: application/json
     {
@@ -23,7 +23,7 @@ An example implementation of OData REST Api.
     }
 	
 # Pay loan:
-    POST /Lenders/odata/loans/13/payLoan HTTP/1.1
+    POST /Lenders/odata/loans/13/payLoan
     Host: localhost
     Content-Type: application/json
     {
@@ -31,8 +31,14 @@ An example implementation of OData REST Api.
     }
 	
 # Get person's loans:
-    GET /Lenders/odata/people(28)/Loans HTTP/1.1
+    GET /Lenders/odata/people(28)/Loans
     Host: localhost
+
+# Get people list:
+    GET /Lenders/odata/people
+    Host: localhost
+	
+Postman request collection for testing is available in postman.json file.
 	
 Used technologies:
 - Entity Framework Core + model first approach + fluent model configuration.
